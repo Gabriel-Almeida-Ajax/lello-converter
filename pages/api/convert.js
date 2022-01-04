@@ -2,7 +2,7 @@
 
 const { parseString } = require('xml2js');
 
-function replacer(text, find, replace) {
+function replacer(text, find, replace = '') {
   return text.split(find).join(replace)
 }
 
