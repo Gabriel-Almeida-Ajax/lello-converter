@@ -2,6 +2,10 @@
 
 const { parseString } = require('xml2js');
 
+function replacer(text, find, replace) {
+  return text.split(find).join(replace)
+}
+
 async function getValeusToCsv(json) {
   let key = Object.keys(json)[0];
 
@@ -9,7 +13,7 @@ async function getValeusToCsv(json) {
 
   let csv = JSON.stringify(json)
 
-  let data = csv.replaceAll('}', '').replaceAll(']', '').replaceAll('{', '').replaceAll('[', '').replaceAll(',', ';')
+  let data = replacer(replacer(replacer(replacer(replacer(csv, '}'), ']'), '{'), '['), ',', ';')
 
   let head = []
   data = data.split(';').map(text => {
