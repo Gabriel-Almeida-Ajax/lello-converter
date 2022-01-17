@@ -6,12 +6,47 @@ function replacer(text, find, replace = '') {
   return text.split(find).join(replace)
 }
 
-async function getValeusToCsv(json) {
+async function getValeusToCsv(json, type = 'default') {
   let key = Object.keys(json)[0];
-
+  let tables = [];
   delete json[key].$;
 
-  let csv = JSON.stringify(json)
+  const sanitize = {
+    'S-2220'(input) {
+      let output = input;
+      return output;
+    },
+    async 'S-2240'(input) {
+      let output = input;
+
+      return new Promise((resolve, reject) => {
+        input.eSocial.evtExpRisco.forEach(risco => {
+          let promises = risco.infoExpRisco.map(async info => {
+            return await getValeusToCsv(info);
+          })
+
+          Promise.allSettled(promises)
+            .then(result => {
+              tables = result.map(process => ({ ...process.value.conteudo, name: 'agentes_nocivos' }));
+              resolve(output);
+
+            }).catch(error => {
+              console.log({ error });
+              resolve(output);
+
+            });
+
+        })
+
+      });
+    },
+    'default'(input) {
+      let output = input;
+
+      return output;
+    },
+  }
+  let csv = JSON.stringify(await sanitize[type](json))
 
   let data = replacer(replacer(replacer(replacer(replacer(csv, '}'), ']'), '{'), '['), ',', ';')
 
@@ -22,7 +57,12 @@ async function getValeusToCsv(json) {
     return splited[splited.length - 1]
   }).join(';')
 
-  return Promise.resolve(head.join(';') + '\n' + data);
+  return Promise.resolve({
+    conteudo: {
+      text: head.join(';') + '\n' + data,
+    },
+    tables
+  });
 }
 
 export default function handler(req, res) {
@@ -32,7 +72,7 @@ export default function handler(req, res) {
 
     parseString(data, async (err, result) => {
       if (result) {
-        let csv = await getValeusToCsv(result);
+        let csv = await getValeusToCsv(result, req.body.type);
         return res.status(201).send(csv);
       }
 

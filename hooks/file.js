@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback } from 'react';
 import { useApi } from "../hooks/api";
+import { useForm } from './form';
 
 const FileContext = createContext();
 
@@ -7,7 +8,10 @@ export const FileProvider = ({ children }) => {
     const { postApi } = useApi();
 
     const [key, setKey] = useState();
+    const [files, setFiles] = useState([]);
+    const [filesR, setFilesR] = useState([]);
 
+    const { form } = useForm();
 
     const loader = useCallback((file) => {
         return new Promise((resolve, reject) => {
@@ -21,21 +25,26 @@ export const FileProvider = ({ children }) => {
             reader.onload = (e) => {
                 const data = e.target.result;
 
-                postApi('/api/convert', { xml: `${data}` })
+                postApi('/api/convert', { xml: `${data}`, ...form })
                     .then(_response => {
-                        resolve({ text: _response, name: file.name.split('.')[0] });
+                        console.log(_response);
+
+                        if (!!_response.tables.length) _response.tables.forEach(table => download({ ...table, name: file.name.split('.')[0] + '_' + table.name }))
+
+                        resolve({ text: _response.conteudo.text, name: file.name.split('.')[0] });
                     })
                     .catch(error => {
                         alert('Não foi possível ler o arquivo.')
                         reject(error);
                     });
 
+
                 setKey(Math.random());
             };
 
             reader.readAsText(file);
         });
-    }, [postApi]);
+    }, [form, postApi]);
 
     const download = useCallback(async (res) => {
         const resBlob = await res.text;
@@ -52,19 +61,22 @@ export const FileProvider = ({ children }) => {
             `${res.name}.csv`,
         );
 
+
         // Append to html link element page
         document.body.appendChild(link);
 
         // Start download
         link.click();
+        setFilesR(old => ([...old, { name: res.name + ".csv" }]));
 
         // Clean up and remove the link
         link.parentNode.removeChild(link);
-    }, [])
+    }, [setFilesR])
 
     const fileLoader = useCallback(
         ({ target }) => {
             if (target.files.length) {
+                setFiles(old => ([...old, ...target.files]))
                 return [...target.files].map(async file => download(await loader(file)));
             }
 
@@ -75,6 +87,8 @@ export const FileProvider = ({ children }) => {
 
     const provider = {
         key,
+        files,
+        filesR,
         download,
         fileLoader,
     }
