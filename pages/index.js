@@ -1,13 +1,20 @@
+import Head from 'next/head'
+
 import { useRef, useState } from "react"
 import { useFile } from "../hooks/file";
 import { useForm } from "../hooks/form";
+
 
 
 export default function Home() {
   const { fileLoader, key, files, filesR } = useFile();
   const { handleInterface, options } = useForm();
 
-  return (
+  return (<>
+    <Head>
+      <title>Lello - eSocial Conversor XML to CSV</title>
+      <link rel="icon" href="https://www.lellocondominios.com.br/wp-content/uploads/2017/01/cropped-Icon-192x192.png" />
+    </Head>
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
       <div style={{ height: '100vh', margin: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <input key={key} onChange={fileLoader} accept=".xml" multiple type="file" />
@@ -48,5 +55,5 @@ export default function Home() {
         </div>
       </div>
     </div>
-  )
+  </>);
 }
