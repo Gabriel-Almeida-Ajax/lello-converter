@@ -20,7 +20,7 @@ export default function Home() {
         <input key={key} onChange={fileLoader} accept=".xml" multiple type="file" />
 
         <select style={{ margin: '30px 0 0' }} onChange={handleInterface} name="interface" id="interface">
-          <option value="" selected>Selecione uma interface</option>
+          <option value="default" selected>Selecione uma interface</option>
           {
             options.map(option => (
               <option key={option.type} value={option.type}>{option.type}</option>
