@@ -21,11 +21,12 @@ async function getValeusToCsv(json, type = 'default') {
 
       return new Promise((resolve, reject) => {
         input.eSocial.evtExpRisco.forEach(risco => {
+          let incricao = risco.ideEmpregador[0].nrInsc[0];
+
           let promises = risco.infoExpRisco.map(async info => {
             return await getValeusToCsv(info);
           })
-          
-          incricao = risco.ideEmpregador.nrInsc.replace(/[^0-9]/g, '');
+
 
           Promise.allSettled(promises)
             .then(result => {
