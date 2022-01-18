@@ -24,10 +24,12 @@ async function getValeusToCsv(json, type = 'default') {
           let promises = risco.infoExpRisco.map(async info => {
             return await getValeusToCsv(info);
           })
+          
+          incricao = risco.ideEmpregador.nrInsc.replace(/[^0-9]/g, '');
 
           Promise.allSettled(promises)
             .then(result => {
-              tables = result.map(process => ({ ...process.value.conteudo, name: 'agentes_nocivos' }));
+              tables = result.map(process => ({ ...process.value.conteudo, name: 'AN_' + incricao + `_${new Date().toISOString().split('.')[0].replace('T', '_').replace(':', 'H').replace(':', 'M') + 'S'}` }));
               resolve(output);
 
             }).catch(error => {
