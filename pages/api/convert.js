@@ -58,6 +58,8 @@ async function getValeusToCsv(json, type = 'default') {
             ufcrmm: atendimento.aso[0]?.medico[0]?.ufCRM ?? [''],
             cpfrsp: atendimento.respMonit[0]?.cpfResp ?? [''],
             nomrsp: atendimento.respMonit[0]?.nmResp ?? [''],
+            numcom: atendimento.respMonit[0]?.nrCRM ?? [''],
+            estcon: atendimento.respMonit[0]?.ufCRM ?? [''],
           }, exames ].map(async info => {
             return await getValeusToCsv(info);
           })
