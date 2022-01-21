@@ -77,6 +77,11 @@ export const FileProvider = ({ children }) => {
         ({ target }) => {
             if (target.files.length) {
                 setFiles(old => ([...old, ...target.files]))
+
+                if (form.type === 'S-2220') {
+                    return [...target.files].map(async file => await loader(file))
+                }
+
                 return [...target.files].map(async file => download(await loader(file)));
             }
 
