@@ -31,7 +31,7 @@ async function getValeusToCsv(json, type = 'default') {
               a_ideImp: '02',
               b_numins: input.eSocial.evtMonit[0]?.ideEmpregador[0]?.nrInsc ?? [''],
               c_tipins: input.eSocial.evtMonit[0]?.ideEmpregador[0]?.tpInsc ?? [''],
-              d_cateso: input.eSocial.evtMonit[0]?.ideVinculo[0]?.codCateg ?? [''],
+              // d_cateso: input.eSocial.evtMonit[0]?.ideVinculo[0]?.codCateg ?? [''],
               // c_tipins: input.eSocial.evtMonit[0]?.ideEmpregador[0]?.tpInsc ?? [''],
               e_cpftra: input.eSocial.evtMonit[0]?.ideVinculo[0]?.cpfTrab ?? [''],
 
