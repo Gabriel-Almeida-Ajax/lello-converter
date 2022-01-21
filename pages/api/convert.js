@@ -32,9 +32,10 @@ async function getValeusToCsv(json, type = 'default') {
               b_numins: input.eSocial.evtMonit[0]?.ideEmpregador[0]?.nrInsc ?? [''],
               c_tipins: input.eSocial.evtMonit[0]?.ideEmpregador[0]?.tpInsc ?? [''],
               d_cateso: input.eSocial.evtMonit[0]?.ideVinculo[0]?.codCateg ?? [''],
+              // c_tipins: input.eSocial.evtMonit[0]?.ideEmpregador[0]?.tpInsc ?? [''],
               e_cpftra: input.eSocial.evtMonit[0]?.ideVinculo[0]?.cpfTrab ?? [''],
 
-              f_datexa: exame.dtExm ?? [''],
+              f_datexa: exame.dtExm && new Date(exame.dtExm[0]).toLocaleDateString('pt-BR') || [''],
               g_prorea: exame.procRealizado ?? [''],
               h_obspro: exame.obsProc ?? [''],
               i_ordexa: exame.ordExame ?? [''],
