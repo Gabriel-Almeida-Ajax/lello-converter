@@ -60,7 +60,7 @@ async function getValeusToCsv(json, type = 'default') {
             nomrsp: atendimento.respMonit[0]?.nmResp ?? [''],
             numcom: atendimento.respMonit[0]?.nrCRM ?? [''],
             estcon: atendimento.respMonit[0]?.ufCRM ?? [''],
-          }, exames ].map(async info => {
+          }, exames].map(async info => {
             return await getValeusToCsv(info);
           })
 
@@ -73,8 +73,8 @@ async function getValeusToCsv(json, type = 'default') {
                 if (i) {
                   _conteudo.text = _conteudo.text.split(';02;').join(';\n\r02;');
                 }
-
-                return { ..._conteudo, name: !i ? 'ASO_' : 'EXA_' + inscricao + `_${new Date().toISOString().split('.')[0]?.replace('T', '_').replace(':', 'H').replace(':', 'M') + 'S'}` }
+                let tfile = !i ? 'ASO_' : 'EXA_'
+                return { ..._conteudo, name: tfile + inscricao + `_${new Date().toISOString().split('.')[0]?.replace('T', '_').replace(':', 'H').replace(':', 'M') + 'S'}` }
               });
 
               resolve(output);
