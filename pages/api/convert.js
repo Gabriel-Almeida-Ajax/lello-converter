@@ -16,7 +16,7 @@ async function getValeusToCsv(json, type = 'default') {
       let output = input;
       return new Promise((resolve, reject) => {
         input.eSocial.evtMonit[0]?.exMedOcup.forEach(atendimento => {
-          let inscricao =  input.eSocial.evtMonit[0]?.ideEmpregador[0]?.nrInsc ?? 'InscricaoNaoIdentificada';
+          let inscricao = input.eSocial.evtMonit[0]?.ideEmpregador[0]?.nrInsc ?? 'InscricaoNaoIdentificada';
           if (!atendimento?.respMonit) {
             atendimento.respMonit = [{}]
           }
@@ -26,8 +26,23 @@ async function getValeusToCsv(json, type = 'default') {
               medico: [{}]
             }]
           }
+          let exames = atendimento.aso[0].exame.map(exame => {
+            return {
+              a_ideImp: '02',
+              b_numins: input.eSocial.evtMonit[0]?.ideEmpregador[0]?.nrInsc ?? [''],
+              c_tipins: input.eSocial.evtMonit[0]?.ideEmpregador[0]?.tpInsc ?? [''],
+              d_cateso: input.eSocial.evtMonit[0]?.ideVinculo[0]?.codCateg ?? [''],
+              e_cpftra: input.eSocial.evtMonit[0]?.ideVinculo[0]?.cpfTrab ?? [''],
 
+              f_datexa: exame.dtExm ?? [''],
+              g_prorea: exame.procRealizado ?? [''],
+              h_obspro: exame.obsProc ?? [''],
+              i_ordexa: exame.ordExame ?? [''],
+              j_indres: exame.indResult ?? [''],
+            }
+          })
           let promises = [{
+            ideImp: '01',
             ideeve: input.eSocial.evtMonit[0]?.$.Id,
             tipins: input.eSocial.evtMonit[0]?.ideEmpregador[0]?.tpInsc ?? [''],
             numins: input.eSocial.evtMonit[0]?.ideEmpregador[0]?.nrInsc ?? [''],
@@ -42,13 +57,23 @@ async function getValeusToCsv(json, type = 'default') {
             ufcrmm: atendimento.aso[0]?.medico[0]?.ufCRM ?? [''],
             cpfrsp: atendimento.respMonit[0]?.cpfResp ?? [''],
             nomrsp: atendimento.respMonit[0]?.nmResp ?? [''],
-          }].map(async info => {
+          }, exames ].map(async info => {
             return await getValeusToCsv(info);
           })
 
           Promise.allSettled(promises)
             .then(result => {
-              tables = result.map(process => ({ ...process.value.conteudo, name: 'ASO_' + inscricao + `_${new Date().toISOString().split('.')[0]?.replace('T', '_').replace(':', 'H').replace(':', 'M') + 'S'}` }));
+              tables = result.map((process, i) => {
+                let _conteudo = { ...process.value.conteudo }
+
+                console.log(_conteudo.text)
+                if (i) {
+                  _conteudo.text = _conteudo.text.split(';02;').join(';\n\r02;');
+                }
+
+                return { ..._conteudo, name: !i ? 'ASO_' : 'EXA_' + inscricao + `_${new Date().toISOString().split('.')[0]?.replace('T', '_').replace(':', 'H').replace(':', 'M') + 'S'}` }
+              });
+
               resolve(output);
 
             }).catch(error => {
@@ -96,18 +121,21 @@ async function getValeusToCsv(json, type = 'default') {
   }
   let csv = JSON.stringify(await sanitize[type](json))
 
+
+  // add a new line after each table
+
   let data = replacer(replacer(replacer(replacer(replacer(csv, '}'), ']'), '{'), '['), ',', ';')
 
-  let head = []
-  data = data.split(';').map(text => {
+  // let head = []
+  data = replacer(data.split(';').map(text => {
     let splited = text.split(':')
-    head.push(splited[splited.length - 2])
+    // head.push(splited[splited.length - 2])
     return splited[splited.length - 1]
-  }).join(';')
+  }).join(';'), '"', '')
 
   return Promise.resolve({
     conteudo: {
-      text: head.join(';') + '\n' + data,
+      text: data,
     },
     tables
   });
