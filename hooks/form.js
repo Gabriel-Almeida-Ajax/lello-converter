@@ -7,7 +7,7 @@ export const FormProvider = ({ children }) => {
     const { postApi } = useApi();
 
     const [form, setForm] = useState({
-        type: 'default',
+        type: 'S-2220',
     });
 
     const options = [
