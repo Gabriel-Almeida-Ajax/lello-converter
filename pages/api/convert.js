@@ -89,21 +89,110 @@ async function getValeusToCsv(json, type = 'default') {
 
       });
     },
-    async 'S-2240'(input) {
+    'S-2240'(input) {
       let output = input;
-
       return new Promise((resolve, reject) => {
-        input.eSocial.evtExpRisco.forEach(risco => {
-          let incricao = risco.ideEmpregador[0]?.nrInsc[0];
+        console.log({ input: JSON.stringify(input.eSocial.evtExpRisco[0]) })
+        input.eSocial.evtExpRisco[0]?.infoExpRisco.forEach(laudo => {
+          let inscricao = input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? 'InscricaoNaoIdentificada';
 
-          let promises = risco.infoExpRisco.map(async info => {
+          if (!laudo?.agNoc) {
+            laudo.agNoc = [{}]
+          }
+          if (!laudo?.agNoc[0]?.epcEpi) {
+            laudo.agNoc[0].epcEpi = [{}]
+          }
+          if (!laudo?.infoAmb) {
+            laudo.infoAmb = [{}]
+          }
+          if (!laudo?.respReg) {
+            laudo.respReg = [{}]
+          }
+          if (!laudo?.agNoc[0]?.epcEpi[0]?.utilizEPI) {
+            laudo.agNoc[0].epcEpi[0].utilizEPI = [{}]
+          }
+          if (!laudo?.agNoc[0]?.epcEpi[0]?.epi) {
+            laudo.agNoc[0].epcEpi[0].epi = [{}]
+          }
+
+          let promises = [{
+            ideImp: '01',
+            ideeve: input.eSocial.evtExpRisco[0]?.$.Id,
+            tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
+            numins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? [''],
+            cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
+            datini: laudo.dtIniCondicao ?? [''],
+            locamb: laudo.infoAmb[0].localAmb ?? [''],
+            dscset: laudo.infoAmb[0].dscSetor ?? [''],
+            tipnam: laudo.infoAmb[0].tpInsc ?? [''],
+            nrinam: laudo.infoAmb[0].nrInsc ?? [''],
+            indret: input.eSocial.evtExpRisco[0].ideEvento[0]?.indRetif ?? [''],
+            desatv: input.eSocial.evtExpRisco[0].infoExpRisco[0]?.infoAtiv[0].dscAtivDes ?? [''],
+
+          }, {
+            ideImp: '02',
+            tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
+            numins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? [''],
+            cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
+            datini: laudo.dtIniCondicao ?? [''],
+            codfat: laudo?.agNoc[0]?.codAgNoc ?? [''],
+            tipava: laudo?.agNoc[0]?.tpAval ?? [''],
+            tipava: laudo?.agNoc[0]?.epcEpi[0]?.utilizEPC ?? [''],
+            efiepc: laudo?.agNoc[0]?.epcEpi[0]?.eficEpc ?? [''],
+            utiepi: laudo?.agNoc[0]?.epcEpi[0]?.utilizEPI ?? [''],
+            medpro: laudo?.agNoc[0]?.epcEpi[0]?.medProtecao ?? [''],
+            codfnc: laudo?.agNoc[0]?.epcEpi[0]?.condFuncto ?? [''],
+            przval: laudo?.agNoc[0]?.epcEpi[0]?.przValid ?? [''],
+            pertro: laudo?.agNoc[0]?.epcEpi[0]?.periodicTroca ?? [''],
+            obshig: laudo?.agNoc[0]?.epcEpi[0]?.higienizacao ?? [''],
+
+          }, {
+            ideImp: '03',
+            tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
+            numins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? [''],
+            cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
+            datini: laudo?.dtIniCondicao ?? [''],
+            ideoc: laudo.respReg[0]?.ideOC ?? [''],
+            dscOC: laudo.respReg[0]?.dscOC ?? [''],
+            nrOC: laudo.respReg[0]?.nrOC ?? [''],
+            ufOC: laudo.respReg[0]?.ufOC ?? [''],
+
+          }]
+
+          if (laudo?.agNoc[0]?.epcEpi[0]?.utilizEPI[0] == 2) {
+            promises.push({
+              ideImp: '04',
+              tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
+              numins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? [''],
+              cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
+              datini: laudo.dtIniCondicao ?? [''],
+              tpAval: laudo?.agNoc[0]?.tpAval ?? [''],
+              medpro: laudo?.agNoc[0]?.epcEpi[0]?.epi[0]?.eficEpi ?? [''],
+              medpro: laudo?.agNoc[0]?.epcEpi[0]?.epi[0]?.medProtecao ?? [''],
+              codfnc: laudo?.agNoc[0]?.epcEpi[0]?.epi[0]?.condFuncto ?? [''],
+              przval: laudo?.agNoc[0]?.epcEpi[0]?.epi[0]?.przValid ?? [''],
+              pertro: laudo?.agNoc[0]?.epcEpi[0]?.epi[0]?.periodicTroca ?? [''],
+              obshig: laudo?.agNoc[0]?.epcEpi[0]?.epi[0]?.higienizacao ?? [''],
+            })
+          }
+
+          promises = promises.map(async info => {
             return await getValeusToCsv(info);
           })
 
-
           Promise.allSettled(promises)
             .then(result => {
-              tables = result.map(process => ({ ...process.value.conteudo, name: 'AN_' + incricao + `_${new Date().toISOString().split('.')[0]?.replace('T', '_').replace(':', 'H').replace(':', 'M') + 'S'}` }));
+              tables = result.map((process, i) => {
+                let _conteudo = { ...process.value.conteudo }
+
+                console.log(_conteudo.text)
+                if (i) {
+                  _conteudo.text = _conteudo.text.split(`;0${i + 1};`).join(`;\n\r0${i + 1};`);
+                }
+                let tfile = ['CON_', 'FRC_', 'RRA_', 'EPI_']
+                return { ..._conteudo, name: tfile[i] + inscricao + `_${new Date().toISOString().split('.')[0]?.replace('T', '_').replace(':', 'H').replace(':', 'M') + 'S'}` }
+              });
+
               resolve(output);
 
             }).catch(error => {
@@ -127,7 +216,7 @@ async function getValeusToCsv(json, type = 'default') {
 
   // add a new line after each table
 
-  let data = replacer(replacer(replacer(replacer(replacer(csv, '}'), ']'), '{'), '['), ',', ';')
+  let data = replacer(replacer(replacer(replacer(replacer(csv, ',"', ';"'), ']'), '{'), '['), '}')
 
   // let head = []
   data = replacer(data.split(';').map(text => {

@@ -78,7 +78,7 @@ export const FileProvider = ({ children }) => {
             if (target.files.length) {
                 setFiles(old => ([...old, ...target.files]))
 
-                if (form.type === 'S-2220') {
+                if (form.type === 'S-2220' || form.type === 'S-2240') {
                     return [...target.files].map(async file => await loader(file))
                 }
 

@@ -17,12 +17,12 @@ export const FormProvider = ({ children }) => {
                 alert('S-2220')
             }
         },
-        // {
-        //     type: 'S-2240',
-        //     callback(){
-        //         alert('S-2240')
-        //     }
-        // }
+        {
+            type: 'S-2240',
+            callback(){
+                alert('S-2240')
+            }
+        }
     ]
 
     const handleInterface = useCallback((e) => {
