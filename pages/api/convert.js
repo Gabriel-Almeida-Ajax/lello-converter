@@ -69,7 +69,6 @@ async function getValeusToCsv(json, type = 'default') {
               tables = result.map((process, i) => {
                 let _conteudo = { ...process.value.conteudo }
 
-                console.log(_conteudo.text)
                 if (i) {
                   _conteudo.text = _conteudo.text.split(';02;').join(';\n\r02;');
                 }
@@ -92,7 +91,6 @@ async function getValeusToCsv(json, type = 'default') {
     'S-2240'(input) {
       let output = input;
       return new Promise((resolve, reject) => {
-        console.log({ input: JSON.stringify(input.eSocial.evtExpRisco[0]) })
         input.eSocial.evtExpRisco[0]?.infoExpRisco.forEach(laudo => {
           let inscricao = input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? 'InscricaoNaoIdentificada';
 
@@ -121,7 +119,7 @@ async function getValeusToCsv(json, type = 'default') {
             tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
             numins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? [''],
             cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
-            datini: laudo.dtIniCondicao ?? [''],
+            datini: laudo?.dtIniCondicao ? new Date(laudo.dtIniCondicao[0]).toLocaleDateString('pt-BR') : [''],
             locamb: laudo.infoAmb[0].localAmb ?? [''],
             dscset: laudo.infoAmb[0].dscSetor ?? [''],
             tipnam: laudo.infoAmb[0].tpInsc ?? [''],
@@ -134,7 +132,7 @@ async function getValeusToCsv(json, type = 'default') {
             tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
             numins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? [''],
             cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
-            datini: laudo.dtIniCondicao ?? [''],
+            datini: laudo?.dtIniCondicao ? new Date(laudo.dtIniCondicao[0]).toLocaleDateString('pt-BR') : [''],
             codfat: laudo?.agNoc[0]?.codAgNoc ?? [''],
             tipava: laudo?.agNoc[0]?.tpAval ?? [''],
             utiepc: laudo?.agNoc[0]?.epcEpi[0]?.utilizEPC ?? [''],
@@ -151,7 +149,7 @@ async function getValeusToCsv(json, type = 'default') {
             tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
             numins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? [''],
             cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
-            datini: laudo?.dtIniCondicao ?? [''],
+            datini: laudo?.dtIniCondicao ? new Date(laudo.dtIniCondicao[0]).toLocaleDateString('pt-BR') : [''],
             cpfres: laudo?.respReg[0]?.cpfResp ?? [''],
             ideoc: laudo.respReg[0]?.ideOC ?? [''],
             dscOC: laudo.respReg[0]?.dscOC ?? [''],
@@ -166,7 +164,7 @@ async function getValeusToCsv(json, type = 'default') {
               tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
               numins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? [''],
               cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
-              datini: laudo.dtIniCondicao ?? [''],          
+              datini: laudo?.dtIniCondicao ? new Date(laudo.dtIniCondicao[0]).toLocaleDateString('pt-BR') : [''],         
               tpAval: laudo?.agNoc[0]?.tpAval ?? [''],
               efiepi: laudo?.agNoc[0]?.epcEpi[0]?.epi[0]?.eficEpi ?? [''],
               medpro: laudo?.agNoc[0]?.epcEpi[0]?.epi[0]?.medProtecao ?? [''],
@@ -186,7 +184,6 @@ async function getValeusToCsv(json, type = 'default') {
               tables = result.map((process, i) => {
                 let _conteudo = { ...process.value.conteudo }
 
-                console.log(_conteudo.text)
                 if (i) {
                   _conteudo.text = _conteudo.text.split(`;0${i + 1};`).join(`;\n\r0${i + 1};`);
                 }

@@ -18,7 +18,6 @@ export const FileProvider = ({ children }) => {
             const reader = new FileReader();
 
             reader.onerror = () => {
-                console.log('> Error: ', reader.error);
                 return alert('Não foi possível ler o arquivo.')
             };
 
@@ -27,11 +26,10 @@ export const FileProvider = ({ children }) => {
 
                 postApi('/api/convert', { xml: `${data}`, ...form })
                     .then(_response => {
-                        console.log(_response);
 
-                        if (!!_response.tables.length) _response.tables.forEach(table => download({ ...table, name: file.name.split('.')[0] + '_' + table.name }))
+                        // if (!!_response.tables.length) _response.tables.forEach(table => download({ ...table, name: file.name.split('.')[0] + '_' + table.name }))
 
-                        resolve({ text: _response.conteudo.text, name: file.name.split('.')[0] });
+                        resolve({ text: _response.conteudo.text, name: file.name.split('.')[0], tables: _response.tables });
                     })
                     .catch(error => {
                         alert('Não foi possível ler o arquivo.')
@@ -78,8 +76,77 @@ export const FileProvider = ({ children }) => {
             if (target.files.length) {
                 setFiles(old => ([...old, ...target.files]))
 
-                if (form.type === 'S-2220' || form.type === 'S-2240') {
-                    return [...target.files].map(async file => await loader(file))
+                if (form.type === 'S-2240') {
+                    return Promise.allSettled([...target.files].map(async file => await loader(file))).then(res => {
+
+                        // make a concat content of all files per result table name
+                        const concat = res.reduce((acc, cur) => {
+                            if (cur.status === 'fulfilled') {
+                                console.log(cur)
+                                // concat table CON
+                                if (cur.value.tables.filter(table => /(CON)([_])/.test(table.name)).length) {
+                                    let table = cur.value.tables.filter(table => /(CON)([_])/.test(table.name))[0];
+                                    acc.CON.text += table.text + "\n"
+                                    acc.CON.name = table.name
+                                };
+
+                                // concat table FRC
+                                if (cur.value.tables.filter(table => /(FRC)([_])/.test(table.name)).length) {
+                                    let table = cur.value.tables.filter(table => /(FRC)([_])/.test(table.name))[0];
+                                    acc.FRC.text += table.text + "\n"
+                                    acc.FRC.name = table.name
+                                };
+
+                                // concat table RRA
+                                if (cur.value.tables.filter(table => /(RRA)([_])/.test(table.name)).length) {
+                                    let table = cur.value.tables.filter(table => /(RRA)([_])/.test(table.name))[0];
+                                    acc.RRA.text += table.text + "\n"
+                                    acc.RRA.name = table.name
+                                };
+
+                                // concat table EPI
+                                if (cur.value.tables.filter(table => /(EPI)([_])/.test(table.name)).length) {
+                                    let table = cur.value.tables.filter(table => /(EPI)([_])/.test(table.name))[0]
+                                    acc.EPI.text += table.text + "\n"
+                                    acc.EPI.name = table.name
+                                };
+                            }
+                            return acc;
+                        }, { CON: { text: '', name: '' }, FRC: { text: '', name: '' }, RRA: { text: '', name: '' }, EPI: { text: '', name: '' } });
+
+                        download({ ...concat.CON });
+                        download({ ...concat.FRC });
+                        download({ ...concat.RRA });
+                        if (concat.EPI.text) download({ ...concat.EPI });
+                    })
+                }
+                if (form.type === 'S-2220') {
+                    return Promise.allSettled([...target.files].map(async file => await loader(file))).then(res => {
+
+                        // make a concat content of all files per result table name
+                        const concat = res.reduce((acc, cur) => {
+                            if (cur.status === 'fulfilled') {
+                                // concat table ASO
+                                if (cur.value.tables.filter(table => /(ASO)([_])/.test(table.name)).length) {
+                                    let table = cur.value.tables.filter(table => /(ASO)([_])/.test(table.name))[0];
+                                    acc.ASO.text += table.text + "\n"
+                                    acc.ASO.name = table.name
+                                };
+
+                                // concat table EXA
+                                if (cur.value.tables.filter(table => /(EXA)([_])/.test(table.name)).length) {
+                                    let table = cur.value.tables.filter(table => /(EXA)([_])/.test(table.name))[0];
+                                    acc.EXA.text += table.text + "\n"
+                                    acc.EXA.name = table.name
+                                };
+
+                            }
+                            return acc;
+                        }, { ASO: { text: '', name: '' }, EXA: { text: '', name: '' } });
+
+                        download({ ...concat.ASO });
+                        download({ ...concat.EXA });
+                    })
                 }
 
                 return [...target.files].map(async file => download(await loader(file)));

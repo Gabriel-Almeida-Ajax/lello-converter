@@ -37,7 +37,7 @@ export default function Home() {
             {
               files.map((file) => (
                 <div key={file.name}>
-                  <h6>{file.name}</h6>
+                  <h6 key={file.name}>{file.name}</h6>
                 </div>
               ))
             }
@@ -47,7 +47,7 @@ export default function Home() {
             {
               filesR.map((file) => (
                 <div key={file.name}>
-                  <h6>{file.name}</h6>
+                  <h6 key={file.name}>{file.name}</h6>
                 </div>
               ))
             }
