@@ -145,6 +145,7 @@ async function getValeusToCsv(json, type = 'default') {
             przval: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.przValid ?? [''],
             pertro: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.periodicTroca ?? [''],
             obshig: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.higienizacao ?? [''],
+            efiepi: laudo?.agNoc[0]?.epcEpi[0]?.eficEpi ?? [''],
           }, {
             ideImp: '03',
             tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
@@ -173,7 +174,6 @@ async function getValeusToCsv(json, type = 'default') {
                 numins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? [''],
                 cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
                 datini: laudo?.dtIniCondicao ? new Date(laudo.dtIniCondicao[0]).toLocaleDateString('pt-BR') : [''],
-                tpAval: laudo?.agNoc[0]?.tpAval ?? [''],
                 efiepi: laudo?.agNoc[0]?.epcEpi[0]?.eficEpi ?? [''],
                 medpro: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.medProtecao ?? [''],
                 codfnc: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.condFuncto ?? [''],
