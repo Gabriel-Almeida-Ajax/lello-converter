@@ -112,7 +112,9 @@ async function getValeusToCsv(json, type = 'default') {
           if (!laudo?.agNoc[0]?.epcEpi[0]?.epi) {
             laudo.agNoc[0].epcEpi[0].epi = [{}]
           }
-
+          if (!laudo?.agNoc[0]?.epcEpi[0]?.epiCompl) {
+            laudo.agNoc[0].epcEpi[0].epiCompl = [{}]
+          }
           let promises = [{
             ideImp: '01',
             ideeve: input.eSocial.evtExpRisco[0]?.$.Id,
@@ -138,12 +140,11 @@ async function getValeusToCsv(json, type = 'default') {
             utiepc: laudo?.agNoc[0]?.epcEpi[0]?.utilizEPC ?? [''],
             efiepc: laudo?.agNoc[0]?.epcEpi[0]?.eficEpc ?? [''],
             utiepi: laudo?.agNoc[0]?.epcEpi[0]?.utilizEPI ?? [''],
-            medpro: laudo?.agNoc[0]?.epcEpi[0]?.medProtecao ?? [''],
-            codfnc: laudo?.agNoc[0]?.epcEpi[0]?.condFuncto ?? [''],
-            przval: laudo?.agNoc[0]?.epcEpi[0]?.przValid ?? [''],
-            pertro: laudo?.agNoc[0]?.epcEpi[0]?.periodicTroca ?? [''],
-            obshig: laudo?.agNoc[0]?.epcEpi[0]?.higienizacao ?? [''],
-
+            medpro: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.medProtecao ?? [''],
+            codfnc: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.condFuncto ?? [''],
+            przval: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.przValid ?? [''],
+            pertro: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.periodicTroca ?? [''],
+            obshig: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.higienizacao ?? [''],
           }, {
             ideImp: '03',
             tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
@@ -155,28 +156,36 @@ async function getValeusToCsv(json, type = 'default') {
             dscOC: laudo.respReg[0]?.dscOC ?? [''],
             nrOC: laudo.respReg[0]?.nrOC ?? [''],
             ufOC: laudo.respReg[0]?.ufOC ?? [''],
-
           }]
 
           if (laudo?.agNoc[0]?.epcEpi[0]?.utilizEPI[0] == 2) {
-            if(!laudo?.agNoc[0]?.epcEpi[0]?.epiCompl){
+            if (!laudo?.agNoc[0]?.epcEpi[0]?.epiCompl) {
               laudo.agNoc[0].epcEpi[0].epiCompl = [{}]
             }
-            console.log(laudo?.agNoc[0])
-            promises.push({
-              ideImp: '04',
-              tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
-              numins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? [''],
-              cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
-              datini: laudo?.dtIniCondicao ? new Date(laudo.dtIniCondicao[0]).toLocaleDateString('pt-BR') : [''],         
-              tpAval: laudo?.agNoc[0]?.tpAval ?? [''],
-              efiepi: laudo?.agNoc[0]?.epcEpi[0]?.eficEpi ?? [''],
-              medpro: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.medProtecao ?? [''],
-              codfnc: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.condFuncto ?? [''],
-              przval: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.przValid ?? [''],
-              pertro: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.periodicTroca ?? [''],
-              obshig: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.higienizacao ?? [''],
+            let data = {
+              epi: []
+            }
+
+            laudo?.agNoc[0]?.epcEpi[0].epi.forEach(epi => {
+              data.epi.push({
+                ideImp: '04',
+                tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
+                numins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? [''],
+                cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
+                datini: laudo?.dtIniCondicao ? new Date(laudo.dtIniCondicao[0]).toLocaleDateString('pt-BR') : [''],
+                tpAval: laudo?.agNoc[0]?.tpAval ?? [''],
+                efiepi: laudo?.agNoc[0]?.epcEpi[0]?.eficEpi ?? [''],
+                medpro: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.medProtecao ?? [''],
+                codfnc: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.condFuncto ?? [''],
+                przval: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.przValid ?? [''],
+                pertro: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.periodicTroca ?? [''],
+                obshig: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.higienizacao ?? [''],
+                dscEPI: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.dscEPI ?? [''],
+                docval: epi.docAval ?? [''],
+                pulalinha: [''],
+              })
             })
+            promises.push({ data })
           }
 
           promises = promises.map(async info => {
@@ -191,6 +200,7 @@ async function getValeusToCsv(json, type = 'default') {
                 if (i) {
                   _conteudo.text = _conteudo.text.split(`;0${i + 1};`).join(`;\n\r0${i + 1};`);
                 }
+
                 let tfile = ['CON_', 'FRC_', 'RRA_', 'EPI_']
                 return { ..._conteudo, name: tfile[i] + inscricao + `_${new Date().toISOString().split('.')[0]?.replace('T', '_').replace(':', 'H').replace(':', 'M') + 'S'}` }
               });
