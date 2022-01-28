@@ -136,7 +136,7 @@ async function getValeusToCsv(json, type = 'default') {
             cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
             datini: laudo?.dtIniCondicao ? new Date(laudo.dtIniCondicao[0]).toLocaleDateString('pt-BR') : [''],
             codfat: laudo?.agNoc[0]?.codAgNoc ?? [''],
-            tipava: laudo?.agNoc[0]?.tpAval ?? [''],
+            tipava: laudo?.agNoc[0]?.tpAval ?? ['2'],
             utiepc: laudo?.agNoc[0]?.epcEpi[0]?.utilizEPC ?? [''],
             efiepc: laudo?.agNoc[0]?.epcEpi[0]?.eficEpc ?? [''],
             utiepi: laudo?.agNoc[0]?.epcEpi[0]?.utilizEPI ?? [''],
@@ -147,6 +147,7 @@ async function getValeusToCsv(json, type = 'default') {
             obshig: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.higienizacao ?? [''],
             efiepi: laudo?.agNoc[0]?.epcEpi[0]?.eficEpi ?? [''],
             usuini: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.usoInint ?? [''],
+            dscAgN: laudo?.agNoc[0]?.dscAgNoc ?? [''],
           }, {
             ideImp: '03',
             tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
