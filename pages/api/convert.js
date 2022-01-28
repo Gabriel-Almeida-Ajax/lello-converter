@@ -159,6 +159,10 @@ async function getValeusToCsv(json, type = 'default') {
           }]
 
           if (laudo?.agNoc[0]?.epcEpi[0]?.utilizEPI[0] == 2) {
+            if(!laudo?.agNoc[0]?.epcEpi[0]?.epiCompl){
+              laudo.agNoc[0].epcEpi[0].epiCompl = [{}]
+            }
+            console.log(laudo?.agNoc[0])
             promises.push({
               ideImp: '04',
               tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
@@ -166,12 +170,12 @@ async function getValeusToCsv(json, type = 'default') {
               cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
               datini: laudo?.dtIniCondicao ? new Date(laudo.dtIniCondicao[0]).toLocaleDateString('pt-BR') : [''],         
               tpAval: laudo?.agNoc[0]?.tpAval ?? [''],
-              efiepi: laudo?.agNoc[0]?.epcEpi[0]?.epi[0]?.eficEpi ?? [''],
-              medpro: laudo?.agNoc[0]?.epcEpi[0]?.epi[0]?.medProtecao ?? [''],
-              codfnc: laudo?.agNoc[0]?.epcEpi[0]?.epi[0]?.condFuncto ?? [''],
-              przval: laudo?.agNoc[0]?.epcEpi[0]?.epi[0]?.przValid ?? [''],
-              pertro: laudo?.agNoc[0]?.epcEpi[0]?.epi[0]?.periodicTroca ?? [''],
-              obshig: laudo?.agNoc[0]?.epcEpi[0]?.epi[0]?.higienizacao ?? [''],
+              efiepi: laudo?.agNoc[0]?.epcEpi[0]?.eficEpi ?? [''],
+              medpro: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.medProtecao ?? [''],
+              codfnc: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.condFuncto ?? [''],
+              przval: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.przValid ?? [''],
+              pertro: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.periodicTroca ?? [''],
+              obshig: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.higienizacao ?? [''],
             })
           }
 
