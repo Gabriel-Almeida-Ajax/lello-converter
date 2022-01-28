@@ -146,6 +146,7 @@ async function getValeusToCsv(json, type = 'default') {
             pertro: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.periodicTroca ?? [''],
             obshig: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.higienizacao ?? [''],
             efiepi: laudo?.agNoc[0]?.epcEpi[0]?.eficEpi ?? [''],
+            usuini: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.usoInint ?? [''],
           }, {
             ideImp: '03',
             tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
