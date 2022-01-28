@@ -182,6 +182,7 @@ async function getValeusToCsv(json, type = 'default') {
                 obshig: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.higienizacao ?? [''],
                 dscEPI: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.dscEPI ?? [''],
                 docval: epi.docAval ?? [''],
+                usuini: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.usoInint ?? [''],
                 pulalinha: [''],
               })
             })
