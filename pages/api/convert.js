@@ -93,6 +93,7 @@ async function getValeusToCsv(json, type = 'default') {
       return new Promise((resolve, reject) => {
         input.eSocial.evtExpRisco[0]?.infoExpRisco.forEach(laudo => {
           let inscricao = input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? 'InscricaoNaoIdentificada';
+          let agentes = [];
 
           if (!laudo?.agNoc) {
             laudo.agNoc = [{}]
@@ -130,24 +131,29 @@ async function getValeusToCsv(json, type = 'default') {
             desatv: input.eSocial.evtExpRisco[0].infoExpRisco[0]?.infoAtiv[0].dscAtivDes ?? [''],
 
           }, {
-            ideImp: '02',
-            tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
-            numins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? [''],
-            cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
-            datini: laudo?.dtIniCondicao ? new Date(laudo.dtIniCondicao[0]).toLocaleDateString('pt-BR') : [''],
-            codfat: laudo?.agNoc[0]?.codAgNoc ?? [''],
-            tipava: laudo?.agNoc[0]?.tpAval ?? ['2'],
-            utiepc: laudo?.agNoc[0]?.epcEpi[0]?.utilizEPC ?? [''],
-            efiepc: laudo?.agNoc[0]?.epcEpi[0]?.eficEpc ?? [''],
-            utiepi: laudo?.agNoc[0]?.epcEpi[0]?.utilizEPI ?? [''],
-            medpro: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.medProtecao ?? [''],
-            codfnc: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.condFuncto ?? [''],
-            przval: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.przValid ?? [''],
-            pertro: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.periodicTroca ?? [''],
-            obshig: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.higienizacao ?? [''],
-            efiepi: laudo?.agNoc[0]?.epcEpi[0]?.eficEpi ?? [''],
-            usuini: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.usoInint ?? [''],
-            dscAgN: laudo?.agNoc[0]?.dscAgNoc ?? [''],
+            frc: laudo.agNoc.map(agente => {
+              agentes.push(agente);
+              return ({
+                ideImp: '02',
+                tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
+                numins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? [''],
+                cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
+                datini: laudo?.dtIniCondicao ? new Date(laudo.dtIniCondicao[0]).toLocaleDateString('pt-BR') : [''],
+                codfat: agente.codAgNoc ?? [''],
+                tipava: agente.tpAval ?? ['2'],
+                utiepc: agente.epcEpi[0]?.utilizEPC ?? [''],
+                efiepc: agente.epcEpi[0]?.eficEpc ?? [''],
+                utiepi: agente.epcEpi[0]?.utilizEPI ?? [''],
+                medpro: agente.epcEpi[0]?.epiCompl[0]?.medProtecao ?? [''],
+                codfnc: agente.epcEpi[0]?.epiCompl[0]?.condFuncto ?? [''],
+                przval: agente.epcEpi[0]?.epiCompl[0]?.przValid ?? [''],
+                pertro: agente.epcEpi[0]?.epiCompl[0]?.periodicTroca ?? [''],
+                obshig: agente.epcEpi[0]?.epiCompl[0]?.higienizacao ?? [''],
+                efiepi: agente.epcEpi[0]?.eficEpi ?? [''],
+                usuini: agente.epcEpi[0]?.epiCompl[0]?.usoInint ?? [''],
+                dscAgN: agente.dscAgNoc ?? [''],
+              })
+            })
           }, {
             ideImp: '03',
             tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
@@ -162,30 +168,36 @@ async function getValeusToCsv(json, type = 'default') {
           }]
 
           if (laudo?.agNoc[0]?.epcEpi[0]?.utilizEPI[0] == 2) {
-            if (!laudo?.agNoc[0]?.epcEpi[0]?.epiCompl) {
-              laudo.agNoc[0].epcEpi[0].epiCompl = [{}]
-            }
+
             let data = {
               epi: []
             }
 
-            laudo?.agNoc[0]?.epcEpi[0].epi.forEach(epi => {
-              data.epi.push({
-                ideImp: '04',
-                tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
-                numins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? [''],
-                cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
-                datini: laudo?.dtIniCondicao ? new Date(laudo.dtIniCondicao[0]).toLocaleDateString('pt-BR') : [''],
-                efiepi: laudo?.agNoc[0]?.epcEpi[0]?.eficEpi ?? [''],
-                medpro: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.medProtecao ?? [''],
-                codfnc: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.condFuncto ?? [''],
-                przval: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.przValid ?? [''],
-                pertro: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.periodicTroca ?? [''],
-                obshig: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.higienizacao ?? [''],
-                dscEPI: epi?.dscEPI ?? [''],
-                docval: epi?.docAval ?? [''],
-                usuini: laudo?.agNoc[0]?.epcEpi[0]?.epiCompl[0]?.usoInint ?? [''],
-                pulalinha: [''],
+            agentes.forEach(_agente => {
+
+
+              _agente.epcEpi[0].epi.forEach(epi => {
+                if (!_agente.epcEpi[0]?.epiCompl) {
+                  _agente.epcEpi[0].epiCompl = [{}]
+                }
+                
+                data.epi.push({
+                  ideImp: '04',
+                  tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
+                  numins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.nrInsc ?? [''],
+                  cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
+                  datini: laudo?.dtIniCondicao ? new Date(laudo.dtIniCondicao[0]).toLocaleDateString('pt-BR') : [''],
+                  efiepi: epi?.eficEpi ?? [''],
+                  medpro: epi?.epiCompl[0]?.medProtecao ?? [''],
+                  codfnc: epi?.epiCompl[0]?.condFuncto ?? [''],
+                  przval: epi?.epiCompl[0]?.przValid ?? [''],
+                  pertro: epi?.epiCompl[0]?.periodicTroca ?? [''],
+                  obshig: epi?.epiCompl[0]?.higienizacao ?? [''],
+                  dscEPI: epi?.dscEPI ?? [''],
+                  docval: epi?.docAval ?? [''],
+                  usuini: epi?.epiCompl[0]?.usoInint ?? [''],
+                  pulalinha: [''],
+                })
               })
             })
             promises.push({ data })
