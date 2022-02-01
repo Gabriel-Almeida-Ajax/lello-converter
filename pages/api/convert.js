@@ -153,7 +153,7 @@ async function getValeusToCsv(json, type = 'default') {
                 efiepi: agente.epcEpi[0]?.eficEpi ?? [''],
                 usuini: agente.epcEpi[0]?.epiCompl[0]?.usoInint ?? [''],
                 dscAgN: agente?.dscAgNoc ?? [''],
-                intcon: agente?.intConc ?? [''],
+                intcon: agente?.intConc ? Number(agente.intConc[0]).toFixed(4).toString().replace('.', ',') : [''],
                 unimed: agente?.unMed ?? [''],
                 tecmed: agente?.tecMedicao ?? [''],
                 pulalinha: [''],
