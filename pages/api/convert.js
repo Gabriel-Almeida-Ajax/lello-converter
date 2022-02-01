@@ -107,15 +107,7 @@ async function getValeusToCsv(json, type = 'default') {
           if (!laudo?.respReg) {
             laudo.respReg = [{}]
           }
-          if (!laudo?.agNoc[0]?.epcEpi[0]?.utilizEPI) {
-            laudo.agNoc[0].epcEpi[0].utilizEPI = [{}]
-          }
-          if (!laudo?.agNoc[0]?.epcEpi[0]?.epi) {
-            laudo.agNoc[0].epcEpi[0].epi = [{}]
-          }
-          if (!laudo?.agNoc[0]?.epcEpi[0]?.epiCompl) {
-            laudo.agNoc[0].epcEpi[0].epiCompl = [{}]
-          }
+
           let promises = [{
             ideImp: '01',
             ideeve: input.eSocial.evtExpRisco[0]?.$.Id,
@@ -132,8 +124,18 @@ async function getValeusToCsv(json, type = 'default') {
 
           }, {
             frc: laudo.agNoc.map(agente => {
+              if (!agente?.epcEpi[0]?.utilizEPI) {
+                agente.epcEpi[0].utilizEPI = [{}]
+              }
+              if (!agente?.epcEpi[0]?.epi) {
+                agente.epcEpi[0].epi = [{}]
+              }
+              if (!agente?.epcEpi[0]?.epiCompl) {
+                agente.epcEpi[0].epiCompl = [{}]
+              }
+
               agentes.push(agente);
-                // FRC CON
+              // FRC CON
               return ({
                 ideImp: '02',
                 tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
