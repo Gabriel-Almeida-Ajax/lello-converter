@@ -133,7 +133,7 @@ async function getValeusToCsv(json, type = 'default') {
           }, {
             frc: laudo.agNoc.map(agente => {
               agentes.push(agente);
-
+                // FRC CON
               return ({
                 ideImp: '02',
                 tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
@@ -152,7 +152,10 @@ async function getValeusToCsv(json, type = 'default') {
                 obshig: agente.epcEpi[0]?.epiCompl[0]?.higienizacao ?? [''],
                 efiepi: agente.epcEpi[0]?.eficEpi ?? [''],
                 usuini: agente.epcEpi[0]?.epiCompl[0]?.usoInint ?? [''],
-                dscAgN: agente.dscAgNoc ?? [''],
+                dscAgN: agente?.dscAgNoc ?? [''],
+                intcon: agente?.intConc ?? [''],
+                unimed: agente?.unMed ?? [''],
+                tecmed: agente?.tecMedicao ?? [''],
                 pulalinha: [''],
               })
             })

@@ -114,6 +114,40 @@ export const FileProvider = ({ children }) => {
                             return acc;
                         }, { CON: { text: '', name: '' }, FRC: { text: '', name: '' }, RRA: { text: '', name: '' }, EPI: { text: '', name: '' } });
 
+
+                        // Filter tables by datini
+                        function orderStringByDatIni(string) {
+
+                            function getDate(str) {
+                                if (/\d{2}\/\d{2}\/\d{4}/g.test(str)) {
+                                    const [date, month, year] = str.match(/\d{2}\/\d{2}\/\d{4}/g)[0].split('/');
+                                    return new Date(year, +month - 1, date)
+                                }
+                                return new Date(1900, 0, 1);
+                            }
+
+                            let ordened = string.split('\n').sort((a, b) => {
+                                const aDatIni = getDate(a);
+                                const bDatIni = getDate(b);
+
+                                if (aDatIni === bDatIni) return 0
+
+                                return aDatIni > bDatIni ? 1 : -1
+                            }).join('\n')
+
+                            if (new RegExp('^\n').test(ordened)) return ordened.replace(/^\n/, '')
+
+                            return ordened;
+                        }
+
+                        concat.CON.text = orderStringByDatIni(concat.CON.text)
+                        concat.FRC.text = orderStringByDatIni(concat.FRC.text)
+                        concat.RRA.text = orderStringByDatIni(concat.RRA.text)
+
+                        console.log(concat)
+
+                        // download all files
+
                         download({ ...concat.CON });
                         download({ ...concat.FRC });
                         download({ ...concat.RRA });
