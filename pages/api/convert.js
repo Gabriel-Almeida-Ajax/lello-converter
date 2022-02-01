@@ -134,7 +134,6 @@ async function getValeusToCsv(json, type = 'default') {
             frc: laudo.agNoc.map(agente => {
               agentes.push(agente);
 
-              console.log(agente.dscAgNoc);
               return ({
                 ideImp: '02',
                 tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
@@ -199,6 +198,7 @@ async function getValeusToCsv(json, type = 'default') {
                   dscEPI: epi?.dscEPI ?? [''],
                   docval: epi?.docAval ?? [''],
                   usuini: _agente.epcEpi[0].epiCompl[0]?.usoInint ?? [''],
+                  codfat: _agente.codAgNoc ?? [''],
                   pulalinha: [''],
                 })
               })
