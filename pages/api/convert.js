@@ -133,6 +133,8 @@ async function getValeusToCsv(json, type = 'default') {
           }, {
             frc: laudo.agNoc.map(agente => {
               agentes.push(agente);
+
+              console.log(agente.dscAgNoc);
               return ({
                 ideImp: '02',
                 tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
@@ -152,6 +154,7 @@ async function getValeusToCsv(json, type = 'default') {
                 efiepi: agente.epcEpi[0]?.eficEpi ?? [''],
                 usuini: agente.epcEpi[0]?.epiCompl[0]?.usoInint ?? [''],
                 dscAgN: agente.dscAgNoc ?? [''],
+                pulalinha: [''],
               })
             })
           }, {
@@ -180,7 +183,7 @@ async function getValeusToCsv(json, type = 'default') {
                 if (!_agente.epcEpi[0]?.epiCompl) {
                   _agente.epcEpi[0].epiCompl = [{}]
                 }
-                
+
                 data.epi.push({
                   ideImp: '04',
                   tipins: input.eSocial.evtExpRisco[0]?.ideEmpregador[0]?.tpInsc ?? [''],
@@ -188,14 +191,14 @@ async function getValeusToCsv(json, type = 'default') {
                   cpftra: input.eSocial.evtExpRisco[0]?.ideVinculo[0]?.cpfTrab ?? [''],
                   datini: laudo?.dtIniCondicao ? new Date(laudo.dtIniCondicao[0]).toLocaleDateString('pt-BR') : [''],
                   efiepi: epi?.eficEpi ?? [''],
-                  medpro: epi?.epiCompl[0]?.medProtecao ?? [''],
-                  codfnc: epi?.epiCompl[0]?.condFuncto ?? [''],
-                  przval: epi?.epiCompl[0]?.przValid ?? [''],
-                  pertro: epi?.epiCompl[0]?.periodicTroca ?? [''],
-                  obshig: epi?.epiCompl[0]?.higienizacao ?? [''],
+                  medpro: _agente.epcEpi[0].epiCompl[0]?.medProtecao ?? [''],
+                  codfnc: _agente.epcEpi[0].epiCompl[0]?.condFuncto ?? [''],
+                  przval: _agente.epcEpi[0].epiCompl[0]?.przValid ?? [''],
+                  pertro: _agente.epcEpi[0].epiCompl[0]?.periodicTroca ?? [''],
+                  obshig: _agente.epcEpi[0].epiCompl[0]?.higienizacao ?? [''],
                   dscEPI: epi?.dscEPI ?? [''],
                   docval: epi?.docAval ?? [''],
-                  usuini: epi?.epiCompl[0]?.usoInint ?? [''],
+                  usuini: _agente.epcEpi[0].epiCompl[0]?.usoInint ?? [''],
                   pulalinha: [''],
                 })
               })
